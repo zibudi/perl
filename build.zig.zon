@@ -1,0 +1,29 @@
+.{
+    .name = .perl,
+    .version = "5.40.2",
+    .fingerprint = 0x5d6a404cd09885a6,
+    .minimum_zig_version = "0.16.0",
+    .dependencies = .{
+        .perl_source = .{
+            .url = "https://www.cpan.org/src/5.0/perl-5.40.2.tar.gz",
+            .hash = "N-V-__8AALEUlAWG_ZvkC39nJRwTrrHAYXdZuDYiEFlxqHgF",
+        },
+        .gnumake = .{
+            .url = "git+https://github.com/zibudi/gnumake.git#dcd58ad7be296cf033c4724a8383891d786e69a9",
+            .hash = "gnumake-4.4.1-mm24-wDGAAC8xSYBtk4_3H_-8xadiSAax8Rc0mviI7o3",
+        },
+        .binutils = .{
+            .url = "git+https://github.com/zibudi/binutils.git#dcd0e3e074d3ff4ca765eaaf14abf2dcf2f1da9f",
+            .hash = "binutils-2.45.0-SsZUiN52AwB3xpJJxytJFTGBFHNrK_OuZPR2ffDuidmg",
+        },
+        .busybox = .{
+            .url = "git+https://github.com/zibudi/busybox.git#1beae96736fcb8697f7ee4f8b6676db7f5dcda70",
+            .hash = "busybox-1.37.0-ooCU90bKgwDXmtkdzhX8puyloLAamrBiQfUtOb1eAfFI",
+        },
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "tools",
+    },
+}

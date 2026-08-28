@@ -1,0 +1,47 @@
+name: perl
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+      - uses: mlugg/setup-zig@d1434d08867e3ee9daa34448df10607b98908d29
+        with:
+          version: 0.16.0
+
+      - name: what the distribution's perl says
+        run: |
+          cat > /tmp/probe.pl <<'PL'
+          use strict;
+          use warnings;
+          use Cwd qw(abs_path);
+          printf "%s\n", abs_path("/usr/../usr");
+          my @o = map { [$_, int(log($_) / log(2))] } (1, 7, 128, 65535, 1 << 30);
+          printf "%d:%d ", @$_ for sort { $a->[1] <=> $b->[1] or $a->[0] <=> $b->[0] } @o;
+          print "\n";
+          my $s = "1.2.840.113549.1.1.11";
+          my @c = split(/[.]/, $s);
+          printf "%d %s\n", scalar(@c), join(",", map { sprintf "%02x", $_ } @c[0 .. 3]);
+          PL
+          perl /tmp/probe.pl > /tmp/theirs.txt
+          cat /tmp/theirs.txt
+
+      - run: zig build
+
+      - name: the perl we built says the same
+        run: |
+          ours=$PWD/zig-out/bin/perl
+          "$ours" -e 'printf "%vd\n", $^V'
+          "$ours" -MConfig -e 'print "usedl=$Config{usedl} useshrplib=$Config{useshrplib}\n"'
+          "$ours" /tmp/probe.pl > /tmp/ours.txt
+          diff /tmp/theirs.txt /tmp/ours.txt
+          echo "identical"
